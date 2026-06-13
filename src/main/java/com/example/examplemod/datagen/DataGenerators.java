@@ -1,13 +1,14 @@
 package com.example.examplemod.datagen;
 
 import com.example.examplemod.ExampleMod;
-import com.example.examplemod.items.DoughItem;
+import com.example.examplemod.datagen.items.IngredientModelProvider;
+import com.example.examplemod.datagen.items.ModItemModelProvider;
 import com.example.examplemod.items.ModItems;
+import com.example.examplemod.model.client.IngredientColor;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -37,14 +38,13 @@ public class DataGenerators {
         BlockTagsProvider blockTagsProvider = new ModBlockTagProvider(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(event.includeServer(), blockTagsProvider);
         generator.addProvider(event.includeServer(), new ModItemTagProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
-        generator.addProvider(event.includeServer(), new ModItemModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new ModItemModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new IngredientModelProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new ModBlockStateProvider(packOutput, existingFileHelper));
-
-
     }
 
     @SubscribeEvent
     public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
-        event.register((itemStack, tintIndex) -> {return 0xFFFFFFFF}, ModItems.FLOUR.value());
+        event.register(IngredientColor::getTint, ModItems.FLOUR.value());
     }
 }

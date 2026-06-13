@@ -1,0 +1,7 @@
+{
+  "loader": "examplemod:dynamic_geometry",
+  "variations": {
+    "base": "examplemod:item/flour/base",
+    "coarse": "examplemod:item/flour/coarse"
+  }
+}

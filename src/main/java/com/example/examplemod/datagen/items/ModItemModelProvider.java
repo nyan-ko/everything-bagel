@@ -1,4 +1,4 @@
-package com.example.examplemod.datagen;
+package com.example.examplemod.datagen.items;
 
 import com.example.examplemod.ExampleMod;
 import com.example.examplemod.items.ModItems;
