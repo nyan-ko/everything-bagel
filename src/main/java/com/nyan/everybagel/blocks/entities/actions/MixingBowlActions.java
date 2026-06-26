@@ -31,7 +31,7 @@ public class MixingBowlActions {
         be.setRecipe(recipe.value());
         var finished = be.mix(MixingBowlBlockEntity.RECIPE_COMPLETE / 20);
         if (finished) {
-            ItemHandlerHelper.giveItemToPlayer(player, recipe.value().getResultItem(be.getLevel().registryAccess()));
+            ItemHandlerHelper.giveItemToPlayer(player, recipe.value().getOutput().copy());
             be.setRecipe(null);
         }
     }

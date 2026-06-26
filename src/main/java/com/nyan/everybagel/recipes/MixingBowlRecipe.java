@@ -14,14 +14,36 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.RecipeMatcher;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public record MixingBowlRecipe(NonNullList<Ingredient> itemIngredients, FluidIngredient fluidIngredient, ItemStack output) implements Recipe<MixingBowlRecipeInput> {
+public class MixingBowlRecipe implements Recipe<MixingBowlRecipeInput> {
+    private final NonNullList<Ingredient> itemIngredients;
+    private final FluidIngredient fluidIngredient;
+    private final ItemStack output;
+
+    public MixingBowlRecipe(NonNullList<Ingredient> itemIngredients, FluidIngredient fluidIngredient, ItemStack output) {
+        this.itemIngredients = itemIngredients;
+        this.fluidIngredient = fluidIngredient;
+        this.output = output;
+    }
+
+    public MixingBowlRecipe(List<ItemStack> items, FluidStack fluid, ItemStack output) {
+        NonNullList<Ingredient> ingredients = NonNullList.create();
+        for (ItemStack itemStack : items) {
+            ingredients.add(Ingredient.of(itemStack));
+        }
+        this.itemIngredients = ingredients;
+        this.fluidIngredient = FluidIngredient.of(fluid);
+        this.output = output;
+    }
+
     @Override
     public NonNullList<Ingredient> getIngredients() {
-        return itemIngredients;
+        return getItemIngredients();
     }
 
     @Override
@@ -47,7 +69,7 @@ public record MixingBowlRecipe(NonNullList<Ingredient> itemIngredients, FluidIng
 
     @Override
     public ItemStack assemble(MixingBowlRecipeInput input, HolderLookup.Provider registries) {
-        return this.output().copy();
+        return output.copy();
     }
 
     @Override
@@ -57,7 +79,7 @@ public record MixingBowlRecipe(NonNullList<Ingredient> itemIngredients, FluidIng
 
     @Override
     public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return output();
+        return output;
     }
 
     @Override
@@ -69,6 +91,10 @@ public record MixingBowlRecipe(NonNullList<Ingredient> itemIngredients, FluidIng
     public RecipeType<?> getType() {
         return ModRecipes.MIXING_BOWL_TYPE.get();
     }
+
+    public NonNullList<Ingredient> getItemIngredients() { return itemIngredients; }
+    public FluidIngredient getFluidIngredient() { return fluidIngredient; }
+    public ItemStack getOutput() { return output; }
 
     public static class Serializer implements RecipeSerializer<MixingBowlRecipe> {
         public static final MapCodec<MixingBowlRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
@@ -87,9 +113,9 @@ public record MixingBowlRecipe(NonNullList<Ingredient> itemIngredients, FluidIng
                                 },
                                 DataResult::success
                         )
-                        .forGetter(MixingBowlRecipe::itemIngredients),
-                FluidIngredient.CODEC.fieldOf("fluid").forGetter(MixingBowlRecipe::fluidIngredient),
-                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(MixingBowlRecipe::output)
+                        .forGetter(MixingBowlRecipe::getItemIngredients),
+                FluidIngredient.CODEC.fieldOf("fluid").forGetter(MixingBowlRecipe::getFluidIngredient),
+                ItemStack.CODEC.fieldOf("result").forGetter(MixingBowlRecipe::getOutput)
         ).apply(inst, MixingBowlRecipe::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, MixingBowlRecipe> STREAM_CODEC = StreamCodec.of(
@@ -106,11 +132,11 @@ public record MixingBowlRecipe(NonNullList<Ingredient> itemIngredients, FluidIng
         }
 
         private static void toNetwork(RegistryFriendlyByteBuf buf, MixingBowlRecipe recipe) {
-            buf.writeVarInt(recipe.itemIngredients.size());
+            buf.writeInt(recipe.itemIngredients.size());
             for (Ingredient ingredient : recipe.itemIngredients) {
                 Ingredient.CONTENTS_STREAM_CODEC.encode(buf, ingredient);
             }
-            FluidIngredient.STREAM_CODEC.encode(buf, recipe.fluidIngredient());
+            FluidIngredient.STREAM_CODEC.encode(buf, recipe.fluidIngredient);
             ItemStack.STREAM_CODEC.encode(buf, recipe.output);
         }
 
