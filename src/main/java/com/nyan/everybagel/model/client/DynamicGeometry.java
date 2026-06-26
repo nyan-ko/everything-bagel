@@ -21,7 +21,6 @@ public class DynamicGeometry implements IUnbakedGeometry<DynamicGeometry> {
         this.variations = new HashMap<>();
         for (Map.Entry<String, String> entry : variations.entrySet()) {
             Material material = new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.parse(entry.getValue()));
-            System.out.println(entry.getKey() + " " + entry.getValue());
             this.variations.put(entry.getKey(), material);
         }
     }
