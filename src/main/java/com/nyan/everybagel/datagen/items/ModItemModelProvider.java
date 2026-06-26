@@ -13,7 +13,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        basicItem(ModItems.DOUGH.get());
+//        basicItem(ModItems.DOUGH.get());
 
 //        var loader = getBuilder("").customLoader(DynamicModelLoader::new);
 

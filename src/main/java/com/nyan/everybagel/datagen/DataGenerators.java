@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = EverythingBagel.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = EverythingBagel.MOD_ID)
 public class DataGenerators {
 
     @SubscribeEvent
@@ -41,10 +41,11 @@ public class DataGenerators {
         generator.addProvider(event.includeClient(), new ModItemModelProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new IngredientModelProvider(packOutput, existingFileHelper));
         generator.addProvider(event.includeClient(), new ModBlockStateProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput, lookupProvider));
     }
 
     @SubscribeEvent
     public static void registerItemColorHandlers(RegisterColorHandlersEvent.Item event) {
-        event.register(IngredientColor::getTint, ModItems.FLOUR.value());
+        IngredientModelProvider.registerTints(event);
     }
 }
