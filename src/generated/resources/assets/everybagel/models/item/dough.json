@@ -1,6 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "everybagel:item/dough"
+  "loader": "everybagel:dynamic_geometry",
+  "variations": {
+    "base": "everybagel:item/dough/base"
   }
 }
