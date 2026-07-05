@@ -2,11 +2,13 @@ package com.nyan.everybagel;
 
 import com.nyan.everybagel.blocks.ModBlocks;
 import com.nyan.everybagel.blocks.entities.ModBlockEntities;
+import com.nyan.everybagel.gateau.mixes.GateauMixLoader;
 import com.nyan.everybagel.items.ModItems;
 import com.nyan.everybagel.items.Tabs;
 import com.nyan.everybagel.recipes.ModRecipes;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -74,6 +76,11 @@ public class EverythingBagel {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
 
+    }
+
+    @SubscribeEvent
+    public void onAddReloadListener(AddReloadListenerEvent event) {
+        event.addListener(GateauMixLoader.INSTANCE);
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event) {

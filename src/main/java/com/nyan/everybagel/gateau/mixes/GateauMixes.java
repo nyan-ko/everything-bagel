@@ -23,4 +23,6 @@ public class GateauMixes {
             GateauMix.Inputs.CODEC,
             GateauMix.Outputs.CODEC
     ).listOf().xmap(GateauMixes::toMap, GateauMixes::toList);
+
+    public static final GateauMixLoader mixes = GateauMixLoader.INSTANCE;
 }
