@@ -2,6 +2,7 @@ package com.nyan.everybagel.blocks.entities.actions;
 
 import com.nyan.everybagel.blocks.entities.MixingBowlBlockEntity;
 import com.nyan.everybagel.blocks.entities.shared.FluidContainerAction;
+import com.nyan.everybagel.gateau.mixes.GateauMixes;
 import com.nyan.everybagel.recipes.MixingBowlRecipe;
 import com.nyan.everybagel.recipes.MixingBowlRecipeInput;
 import com.nyan.everybagel.recipes.ModRecipes;
@@ -25,6 +26,7 @@ public class MixingBowlActions {
     public static void debug(MixingBowlBlockEntity be, Player player) {
         player.displayClientMessage(Component.literal("DEBUG"), false);
         player.displayClientMessage(Component.literal(be.toString()), false);
+        player.displayClientMessage(Component.literal(GateauMixes.mixes.getMixes().toString()), false);
     }
 
     public static void mix(MixingBowlBlockEntity be, RecipeHolder<MixingBowlRecipe> recipe, Player player) {
@@ -34,6 +36,7 @@ public class MixingBowlActions {
             ItemHandlerHelper.giveItemToPlayer(player, recipe.value().getOutput().copy());
             be.setRecipe(null);
         }
+//        player.getItemInHand(InteractionHand.MAIN_HAND).get()
     }
 
     public static void insert(IItemHandler inventory, ItemStack stack, Player player, InteractionHand hand) {

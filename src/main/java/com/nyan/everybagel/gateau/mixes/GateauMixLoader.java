@@ -28,13 +28,6 @@ public class GateauMixLoader extends SimpleJsonResourceReloadListener {
         this.mixes = Map.of();
     }
 
-//    @Override
-//    protected Map<ResourceLocation, JsonElement> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
-//        var map = super.prepare(resourceManager, profiler);
-//        List<ResourceLocation> finalLocations = new ArrayList<>();
-//        ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, "gateau_mixes");
-//    }
-
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
         ImmutableMap.Builder<GateauMix.Inputs, GateauMix.Outputs> builder = ImmutableMap.builder();

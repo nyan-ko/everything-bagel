@@ -3,6 +3,8 @@ package com.nyan.everybagel.datagen;
 import com.nyan.everybagel.EverythingBagel;
 import com.nyan.everybagel.gateau.Gateaux;
 import com.nyan.everybagel.gateau.powers.GateauPower;
+import com.nyan.everybagel.gateau.powers.GateauPowers;
+import com.nyan.everybagel.gateau.powers.JaggedPower;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.PackOutput;
@@ -19,11 +21,11 @@ public class GateauPowerProvider extends DatapackBuiltinEntriesProvider {
 
     private static RegistrySetBuilder getRegistrySetBuilder() {
         return new RegistrySetBuilder()
-                .add(Gateaux.GATEAU_POWER_REGISTRY_KEY, bootstrap -> {
-                    bootstrap.register(Gateaux.POWER11, new GateauPower.Power1(1));
-                    bootstrap.register(Gateaux.POWER12, new GateauPower.Power1(4));
-                    bootstrap.register(Gateaux.POWER13, new GateauPower.Power1(8));
-                    bootstrap.register(Gateaux.POWER2, new GateauPower.Power2(0, Optional.empty()));
+                .add(GateauPowers.GATEAU_POWER_REGISTRY_KEY,bootstrap -> {
+                    bootstrap.register(GateauPowers.JAGGED_WEAK, new JaggedPower(1.0f, 10.0f, 2.0f));
+                    bootstrap.register(GateauPowers.JAGGED_MEDIUM, new JaggedPower(2.0f, 15.0f,  4.0f));
+                    bootstrap.register(GateauPowers.JAGGED_STRONG, new JaggedPower(3.0f, 20.0f,  6.0f));
+
                 });
     }
 

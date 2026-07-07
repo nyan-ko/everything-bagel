@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import com.nyan.everybagel.EverythingBagel;
+import com.nyan.everybagel.gateau.Gateau;
 import com.nyan.everybagel.gateau.Gateaux;
 import com.nyan.everybagel.gateau.mixes.GateauMix;
 import com.nyan.everybagel.gateau.mixes.GateauMixes;
@@ -25,14 +26,13 @@ public class GateauMixProvider implements DataProvider {
         this.packOutput = packOutput;
     }
 
-    public static Map.Entry<GateauMix.Inputs, GateauMix.Outputs> squish(List<ResourceKey<GateauPower>> inputs, List<ResourceKey<GateauPower>> outputs) {
+    public static Map.Entry<GateauMix.Inputs, GateauMix.Outputs> squish(List<ResourceKey<Gateau>> inputs, List<ResourceKey<Gateau>> outputs) {
         return Map.entry(new GateauMix.Inputs(inputs), new GateauMix.Outputs(outputs));
     }
 
     private static Map<GateauMix.Inputs, GateauMix.Outputs> getContents() {
         return ImmutableMap.<GateauMix.Inputs, GateauMix.Outputs>builder()
-                .put(squish(List.of(Gateaux.POWER2, Gateaux.POWER11), List.of(Gateaux.POWER12)))
-                .put(squish(List.of(Gateaux.POWER2, Gateaux.POWER12), List.of(Gateaux.POWER13)))
+//                .put(squish(List.of(Gateaux.DEFAULT, Gateaux.DEFAULT2), List.of(Gateaux.DEFAULT2)))
                 .build();
     }
 

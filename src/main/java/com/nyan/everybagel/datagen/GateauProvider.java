@@ -3,6 +3,7 @@ package com.nyan.everybagel.datagen;
 import com.nyan.everybagel.EverythingBagel;
 import com.nyan.everybagel.gateau.Gateau;
 import com.nyan.everybagel.gateau.Gateaux;
+import com.nyan.everybagel.gateau.powers.GateauPowers;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.PackOutput;
@@ -20,8 +21,8 @@ public class GateauProvider extends DatapackBuiltinEntriesProvider {
     private static RegistrySetBuilder getRegistrySetBuilder() {
         return new RegistrySetBuilder()
                 .add(Gateaux.GATEAU_REGISTRY_KEY, bootstrap -> {
-                    bootstrap.register(Gateaux.DEFAULT, new Gateau("default", List.of(Gateaux.POWER11)));
-                    bootstrap.register(Gateaux.DEFAULT2, new Gateau("default2", List.of(Gateaux.POWER2)));
+                    bootstrap.register(Gateaux.FLINT, new Gateau("flint", List.of(GateauPowers.JAGGED_WEAK)));
+
                 });
     }
 

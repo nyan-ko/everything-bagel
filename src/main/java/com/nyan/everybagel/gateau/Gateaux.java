@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.nyan.everybagel.EverythingBagel;
 import com.nyan.everybagel.gateau.powers.GateauPower;
+import com.nyan.everybagel.gateau.powers.GateauPowers;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -18,42 +19,41 @@ import java.util.Map;
 public class Gateaux {
     public static final ResourceKey<Registry<Gateau>> GATEAU_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, "gateau"));
 
-    public static final ResourceKey<Registry<GateauPower>> GATEAU_POWER_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, "gateau_powers"));
+    public static final ResourceKey<Gateau> WOOD = createGateauResourceKey("wood");
+    public static final ResourceKey<Gateau> STONE = createGateauResourceKey("stone");
+    public static final ResourceKey<Gateau> GRAVEL = createGateauResourceKey("gravel");
+    public static final ResourceKey<Gateau> SAND = createGateauResourceKey("sand");
+    public static final ResourceKey<Gateau> DIRT = createGateauResourceKey("dirt");
 
-    public static final ResourceKey<Gateau> DEFAULT = createGateauResourceKey("default");
-    public static final ResourceKey<Gateau> DEFAULT2 = createGateauResourceKey("default2");
+    public static final ResourceKey<Gateau> FLINT = createGateauResourceKey("flint");
+    public static final ResourceKey<Gateau> BONE = createGateauResourceKey("bone");
+    public static final ResourceKey<Gateau> SCULK = createGateauResourceKey("sculk");
 
-    public static final ResourceKey<GateauPower> POWER11 = createPowerResourceKey("power11");
-    public static final ResourceKey<GateauPower> POWER12 = createPowerResourceKey("power12");
-    public static final ResourceKey<GateauPower> POWER13 = createPowerResourceKey("power13");
-    public static final ResourceKey<GateauPower> POWER2 = createPowerResourceKey("power2");
+    public static final ResourceKey<Gateau> COPPER = createGateauResourceKey("copper");
+    public static final ResourceKey<Gateau> IRON = createGateauResourceKey("iron");
+    public static final ResourceKey<Gateau> GOLD = createGateauResourceKey("gold");
+    public static final ResourceKey<Gateau> NETHERITE = createGateauResourceKey("netherite");
+
+    public static final ResourceKey<Gateau> COAL = createGateauResourceKey("coal");
+    public static final ResourceKey<Gateau> AMETHYST = createGateauResourceKey("amethyst");
+    public static final ResourceKey<Gateau> REDSTONE = createGateauResourceKey("redstone");
+    public static final ResourceKey<Gateau> GLOWSTONE = createGateauResourceKey("glowstone");
+    public static final ResourceKey<Gateau> NETHER_QUARTZ = createGateauResourceKey("nether_quartz");
+    public static final ResourceKey<Gateau> PRISMARINE = createGateauResourceKey("prismarine");
+    public static final ResourceKey<Gateau> LAPIS_LAZULI = createGateauResourceKey("lapis_lazuli");
+    public static final ResourceKey<Gateau> DIAMOND = createGateauResourceKey("diamond");
+    public static final ResourceKey<Gateau> EMERALD = createGateauResourceKey("emerald");
 
     private static ResourceKey<Gateau> createGateauResourceKey(String key) {
         return ResourceKey.create(GATEAU_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, key));
     }
 
-    private static ResourceKey<GateauPower> createPowerResourceKey(String key) {
-        return ResourceKey.create(GATEAU_POWER_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, key));
-    }
-
     public static final Codec<Gateau> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     Codec.STRING.fieldOf("id").forGetter(Gateau::getId),
-                    ResourceKey.codec(GATEAU_POWER_REGISTRY_KEY).listOf().fieldOf("powers").forGetter(Gateau::getPowers)
+                    ResourceKey.codec(GateauPowers.GATEAU_POWER_REGISTRY_KEY).listOf().fieldOf("powers").forGetter(Gateau::getPowers)
             ).apply(instance, Gateau::new)
     );
-
-    public static final Map<ResourceLocation, MapCodec<? extends GateauPower>> POWER_CODECS_BY_RESOURCE = Map.of(
-            GateauPower.Power1.ID, GateauPower.Power1.CODEC,
-            GateauPower.Power2.ID, GateauPower.Power2.CODEC
-    );
-
-    public static final Codec<GateauPower> POWER_CODEC = ResourceLocation.CODEC.dispatch(
-            "type",
-            GateauPower::base,
-            POWER_CODECS_BY_RESOURCE::get
-    );
-
 
     @SubscribeEvent
     public static void registerDatapackRegistries(DataPackRegistryEvent.NewRegistry event) {
@@ -61,11 +61,6 @@ public class Gateaux {
                 GATEAU_REGISTRY_KEY,
                 CODEC,
                 CODEC
-        );
-        event.dataPackRegistry(
-                GATEAU_POWER_REGISTRY_KEY,
-                POWER_CODEC,
-                POWER_CODEC
         );
     }
 }
