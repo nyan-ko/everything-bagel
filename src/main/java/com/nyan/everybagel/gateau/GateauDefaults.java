@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.List;
 
-public enum GateauDefinitions {
+public enum GateauDefaults {
     WOOD("wood", Gateau.Visual.of(140, 70, 0, "base"), List.of(GateauPowers.PLACEHOLDER)),
     STONE("stone", Gateau.Visual.of(114, 114, 114, "coarse"), List.of(GateauPowers.PLACEHOLDER)),
     GRAVEL("gravel", Gateau.Visual.of(104, 104, 104, "coarse"), List.of(GateauPowers.PLACEHOLDER)),
@@ -43,11 +43,11 @@ public enum GateauDefinitions {
     private final Gateau.Visual look;
     private final List<ResourceKey<GateauPower>> powers;
 
-    GateauDefinitions(String id) {
+    GateauDefaults(String id) {
         this(id, Gateau.Visual.PLACEHOLDER, List.of());
     }
 
-    GateauDefinitions(String id, Gateau.Visual look, List<ResourceKey<GateauPower>> powers) {
+    GateauDefaults(String id, Gateau.Visual look, List<ResourceKey<GateauPower>> powers) {
         this.tag = createTagKey(id);
         this.gateau = createGateauResourceKey(id);
         this.look = look;

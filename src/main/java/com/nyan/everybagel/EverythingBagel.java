@@ -2,7 +2,7 @@ package com.nyan.everybagel;
 
 import com.nyan.everybagel.blocks.ModBlocks;
 import com.nyan.everybagel.blocks.entities.ModBlockEntities;
-import com.nyan.everybagel.gateau.GateauDefinitions;
+import com.nyan.everybagel.gateau.Gateaux;
 import com.nyan.everybagel.gateau.mixes.GateauMixLoader;
 import com.nyan.everybagel.items.ModItems;
 import com.nyan.everybagel.items.Tabs;
@@ -65,13 +65,16 @@ public class EverythingBagel {
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            for (GateauDefinitions gateau : GateauDefinitions.values()) {
+            var provider = event.getParameters().holders();
+            var registry = provider.lookupOrThrow(Gateaux.GATEAU_REGISTRY_KEY);
+            registry.listElements().forEach(ref -> {
+                var gateau = ref.value();
                 var stack = ModItems.FLOUR.toStack();
-                stack.set(ModComponents.GATEAU, gateau.getGateau());
+                stack.set(ModComponents.GATEAU, ref.key());
                 stack.set(ModComponents.INGREDIENT, gateau.getLook().variation());
                 stack.set(ModComponents.INGREDIENT_TINT, gateau.getLook().color());
                 event.accept(stack);
-            }
+            });
         }
 
 //        else if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {

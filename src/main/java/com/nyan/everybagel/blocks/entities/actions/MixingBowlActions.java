@@ -26,7 +26,10 @@ public class MixingBowlActions {
     public static void debug(MixingBowlBlockEntity be, Player player) {
         player.displayClientMessage(Component.literal("DEBUG"), false);
         player.displayClientMessage(Component.literal(be.toString()), false);
-        player.displayClientMessage(Component.literal(GateauMixes.mixes.getMixes().toString()), false);
+        if (!player.getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
+            var stack = player.getItemInHand(InteractionHand.OFF_HAND);
+            player.displayClientMessage(Component.literal(stack.getComponents().toString()), false);
+        }
     }
 
     public static void mix(MixingBowlBlockEntity be, RecipeHolder<MixingBowlRecipe> recipe, Player player) {

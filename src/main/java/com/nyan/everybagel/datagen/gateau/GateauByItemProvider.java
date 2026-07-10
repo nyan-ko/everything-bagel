@@ -1,7 +1,7 @@
 package com.nyan.everybagel.datagen.gateau;
 
 import com.nyan.everybagel.gateau.Gateaux;
-import com.nyan.everybagel.gateau.GateauDefinitions;
+import com.nyan.everybagel.gateau.GateauDefaults;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DataMapProvider;
@@ -17,7 +17,7 @@ public class GateauByItemProvider extends DataMapProvider {
     @Override
     protected void gather(HolderLookup.Provider provider) {
         var map = builder(Gateaux.GATEAU_BY_ITEM);
-        for (GateauDefinitions wg : GateauDefinitions.values()) {
+        for (GateauDefaults wg : GateauDefaults.values()) {
             map.add(wg.getTag(), wg.getGateau(), false);
         }
     }
