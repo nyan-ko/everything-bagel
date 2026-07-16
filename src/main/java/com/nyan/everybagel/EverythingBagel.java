@@ -25,6 +25,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
+import java.util.List;
+
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(EverythingBagel.MOD_ID)
 public class EverythingBagel {
@@ -70,7 +72,7 @@ public class EverythingBagel {
             registry.listElements().forEach(ref -> {
                 var gateau = ref.value();
                 var stack = ModItems.FLOUR.toStack();
-                stack.set(ModComponents.GATEAU, ref.key());
+                stack.set(ModComponents.GATEAU, List.of(ref.key()));
                 stack.set(ModComponents.INGREDIENT, gateau.getLook().variation());
                 stack.set(ModComponents.INGREDIENT_TINT, gateau.getLook().color());
                 event.accept(stack);
