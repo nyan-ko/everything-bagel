@@ -2,6 +2,7 @@ package com.nyan.everybagel;
 
 import com.mojang.serialization.Codec;
 import com.nyan.everybagel.gateau.Gateau;
+import com.nyan.everybagel.gateau.GateauSet;
 import com.nyan.everybagel.gateau.Gateaux;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -11,6 +12,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 
 public class ModComponents {
@@ -20,7 +22,7 @@ public class ModComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> INGREDIENT_TINT = register("ingredient_tint", builder -> builder.persistent(Codec.INT));
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ResourceKey<Gateau>>>> GATEAU = register("gateau", builder -> builder.persistent(ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).listOf()));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GateauSet>> GATEAU = register("gateau", builder -> builder.persistent(GateauSet.CODEC));
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
         return DATA_COMPONENT_TYPE.register(name, () -> builderOperator.apply(DataComponentType.builder()).build());
