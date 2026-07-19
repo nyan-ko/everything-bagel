@@ -1,35 +1,42 @@
 package com.nyan.everybagel.gateau;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GateauSet implements Set<Gateau.Key> {
     private final TreeSet<Gateau.Key> set;
     private boolean dirty;
     private int xor;
 
-    public static final Codec<GateauSet> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            Gateau.Key.CODEC.listOf().xmap(list -> new TreeSet<>(list), tree -> new ArrayList<>(tree)).fieldOf("contents").forGetter(GateauSet::getSet)
-    ).apply(inst, GateauSet::new));
+    public static final Codec<GateauSet> CODEC = Gateau.Key.CODEC.listOf().xmap(GateauSet::of, set -> set.stream().toList());
 
-    public static final GateauSet EMPTY = new GateauSet();
-
-//    public static final Codec<TreeSet<Gateau.Key>> CODEC = Gateau.Key.CODEC.listOf().xmap(list -> new TreeSet<>(list), tree -> new ArrayList<>(tree));
-
-    public GateauSet() {
-        this.set = new TreeSet<>();
-        this.dirty = false;
-        this.xor = 0;
-    }
-
-    public GateauSet(TreeSet<Gateau.Key> set) {
+    private GateauSet(TreeSet<Gateau.Key> set) {
         this.set = set;
         this.dirty = false;
         this.xor = 0;
         reXor();
+    }
+
+    public static GateauSet of() {
+        return of(Collections.emptySet());
+    }
+
+    public static GateauSet of(Collection<Gateau.Key> keys) {
+        return new GateauSet(new TreeSet<>(keys));
+    }
+
+    public static GateauSet of(Gateau.Key... keys) {
+        return of(Arrays.asList(keys));
+    }
+
+    public static GateauSet of(GateauDefaults... defaults) {
+        return of(Arrays.stream(defaults).map(GateauDefaults::getKey).collect(Collectors.toList()));
     }
 
     private void reXor() {
@@ -129,6 +136,16 @@ public class GateauSet implements Set<Gateau.Key> {
         dirty = false;
         xor = 0;
         set.clear();
+    }
+
+    @Override
+    public String toString() {
+        if (size() == 1) {
+            return set.getFirst().toString();
+        }
+        else {
+            return "" + size();
+        }
     }
 
     public TreeSet<Gateau.Key> getSet() { return set; }

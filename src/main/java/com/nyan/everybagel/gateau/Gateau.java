@@ -5,9 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.nyan.everybagel.gateau.powers.GateauPower;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.FastColor;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Gateau {
     private final String id;
@@ -37,27 +37,34 @@ public class Gateau {
         }
     }
 
-    public static class Key {
+    public static class Key implements Comparable<Key> {
         private final ResourceKey<Gateau> key;
+
+        public static final Codec<Key> CODEC = ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).xmap(Key::new, Key::getKey);
 
         public Key(ResourceKey<Gateau> key) {
             this.key = key;
         }
-    }
 
-    public static class KeyList {
-        private final List<Key> keys;
+        public ResourceKey<Gateau> getKey() { return key; }
 
-        private KeyList(List<Gateau.Key> keys) {
-            this.keys = new ArrayList<>(keys);
+        @Override
+        public int compareTo(@NotNull Gateau.Key o) {
+            var opath = o.key.location().getPath();
+            var mepath =  this.key.location().getPath();
+            return opath.compareTo(mepath);
         }
 
-        public static KeyList of(List<Gateau.Key> keys) {
-            return new KeyList(keys);
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            Key key1 = (Key) o;
+            return Objects.equals(key, key1.key);
         }
 
-        public void add(Gateau.Key key) {
-            keys.add(key);
+        @Override
+        public int hashCode() {
+            return key.location().hashCode();
         }
     }
 }
