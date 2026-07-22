@@ -145,9 +145,9 @@ public class GateauSet implements Set<Gateau.Key> {
     public String getName() {
         if (dirty) {
             if (size() == 1) {
-                var connection = Minecraft.getInstance().getConnection();
+                var connection = Minecraft.getInstance();
                 if (connection != null) {
-                    connection.registryAccess().registry(Gateaux.GATEAU_REGISTRY_KEY).ifPresent(
+                    connection.getConnection().registryAccess().registry(Gateaux.GATEAU_REGISTRY_KEY).ifPresent(
                             gateaux -> printName = gateaux.get(this.set.first().getKey()).getId());
                 }
                 else {

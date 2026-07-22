@@ -41,7 +41,7 @@ public class PowerSetIterator<T> implements Iterator<Set<T>> {
         int grey = i ^ (i >> 1);
         int diff = grey ^ prev;
 
-        if ((grey & diff) == 1) {
+        if ((grey & diff) > 0) {
             cur.add(list.get(BIT_TO_INDEX.getOrDefault(diff, 0)));
         }
         else {

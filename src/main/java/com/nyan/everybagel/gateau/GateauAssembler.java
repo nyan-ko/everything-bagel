@@ -43,4 +43,17 @@ public class GateauAssembler {
         }
         return result;
     }
+
+    public static GateauSet computeOutput(GateauSet input, Map<GateauSet, GateauSet> mixes) {
+        var result = GateauSet.of();
+        var iterator = new PowerSetIterator<>(input, GateauSet::of);
+        while (iterator.hasNext()) {
+            var set = (GateauSet) iterator.next();
+            var mix = mixes.getOrDefault(set, GateauSet.EMPTY);
+            if (mix != GateauSet.EMPTY) {
+                result.addAll(mix);
+            }
+        }
+        return result;
+    }
 }
