@@ -43,22 +43,21 @@ public class MixingBowlActions {
         }
     }
 
-    public static void mix(MixingBowlBlockEntity be, RecipeHolder<MixingBowlRecipe> recipe, Player player) {
-        be.setRecipe(recipe.value());
-        var finished = be.mix(MixingBowlBlockEntity.RECIPE_COMPLETE / 20);
+    public static void mix(MixingBowlBlockEntity be, Player player) {
+        var finished = be.mix(MixingBowlBlockEntity.RECIPE_COMPLETE / 5);
         if (finished) {
-            var result = recipe.value().getOutput().copy();
+            var result = new ItemStack(ModItems.DOUGH.get());
             var inputGateaux = GateauAssembler.sumInputGateaux(be.getInventory());
-            var outputGateaux = GateauAssembler.computeCombinations(inputGateaux);
+            var outputGateaux = GateauAssembler.computeOutput(inputGateaux, GateauMixes.MIXES.getMixes());
             result.set(ModComponents.GATEAU, outputGateaux);
             ItemHandlerHelper.giveItemToPlayer(player, result);
-            be.setRecipe(null);
         }
     }
 
-    public static void insert(IItemHandler inventory, ItemStack stack, Player player, InteractionHand hand) {
-        var result = ItemHandlerHelper.insertItem(inventory, stack.copy(), false);
+    public static void insert(MixingBowlBlockEntity be, ItemStack stack, Player player, InteractionHand hand) {
+        var result = ItemHandlerHelper.insertItem(be.getInventory(), stack.copy(), false);
         player.setItemInHand(hand, result);
+        be.resetProgress();
     }
 
     public static void pop(MixingBowlBlockEntity be, Player player) {
@@ -77,6 +76,7 @@ public class MixingBowlActions {
 
         ItemStack stack = inv.extractItem(idx, Integer.MAX_VALUE, false);
         ItemHandlerHelper.giveItemToPlayer(player, stack);
+        be.resetProgress();
     }
 
     public static boolean drain(ItemStack stack, IFluidHandler capability, Player player, InteractionHand hand) {

@@ -39,7 +39,8 @@ public enum GateauDefaults {
     EMERALD("emerald");
 
     private final TagKey<Item> tag;
-    private final Gateau.Key gateau;
+    private final ResourceKey<Gateau> key;
+//    private final Gateau.Key gateau;
     private final Gateau.Visual look;
     private final List<ResourceKey<GateauPower>> powers;
 
@@ -49,18 +50,19 @@ public enum GateauDefaults {
 
     GateauDefaults(String id, Gateau.Visual look, List<ResourceKey<GateauPower>> powers) {
         this.tag = createTagKey(id);
-        this.gateau = createGateauResourceKey(id);
+        this.key = createResourceKey(id);
         this.look = look;
         this.powers = powers;
     }
 
     public TagKey<Item> getTag() { return tag; }
-    public Gateau.Key getKey() { return gateau; }
+    public Gateau.Key getGateauKey() { return new Gateau.Key(key); }
+    public Gateau.Key getGateauKey(int quality, int quantity) { return new Gateau.Key(key, quality, quantity); }
     public Gateau.Visual getLook() { return look; }
     public List<ResourceKey<GateauPower>> getPowers() { return powers; }
 
-    private static Gateau.Key createGateauResourceKey(String id) {
-        return new Gateau.Key(ResourceKey.create(Gateaux.GATEAU_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, id)));
+    private static ResourceKey<Gateau> createResourceKey(String id) {
+        return ResourceKey.create(Gateaux.GATEAU_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, "gateau/" + id));
     }
 
     private static TagKey<Item> createTagKey(String id) {

@@ -23,18 +23,5 @@ public class GateauMixes {
             GateauSet.CODEC.fieldOf("outputs").codec()
     ).listOf().xmap(GateauMixes::toMap, GateauMixes::toList);
 
-    private static final GateauMixLoader MIXES = GateauMixLoader.INSTANCE;
-    private static final Map<GateauSet, GateauSet> CACHE = new HashMap<>();
-
-    public static GateauSet queryCache(GateauSet input) {
-        return CACHE.getOrDefault(input, GateauSet.EMPTY);
-    }
-
-    public static GateauSet queryMixes(GateauSet input) {
-        return MIXES.getMixes().getOrDefault(input, GateauSet.EMPTY);
-    }
-
-    public static void cacheMix(GateauSet input, GateauSet output) {
-        CACHE.put(input, output);
-    }
+    public static final GateauMixLoader MIXES = GateauMixLoader.INSTANCE;
 }

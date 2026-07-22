@@ -21,7 +21,7 @@ public class GateauProvider extends DatapackBuiltinEntriesProvider {
         return new RegistrySetBuilder()
                 .add(Gateaux.GATEAU_REGISTRY_KEY, bootstrap -> {
                     for (GateauDefaults gateau : GateauDefaults.values()) {
-                        bootstrap.register(gateau.getKey().getKey(), new Gateau(gateau.name(), gateau.getLook(), gateau.getPowers()));
+                        bootstrap.register(gateau.getGateauKey().key(), new Gateau(gateau.name(), gateau.getLook(), gateau.getPowers()));
                     }
                 });
     }

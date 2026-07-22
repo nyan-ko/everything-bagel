@@ -3,6 +3,7 @@ package com.nyan.everybagel.blocks.entities.dispatchers;
 import com.nyan.everybagel.ModItemTags;
 import com.nyan.everybagel.blocks.entities.MixingBowlBlockEntity;
 import com.nyan.everybagel.blocks.entities.actions.MixingBowlActions;
+import com.nyan.everybagel.gateau.Gateaux;
 import com.nyan.everybagel.recipes.MixingBowlRecipe;
 import com.nyan.everybagel.recipes.MixingBowlRecipeInput;
 import com.nyan.everybagel.recipes.ModRecipes;
@@ -31,15 +32,7 @@ public class MixingBowlUseItemOn {
     public static ItemInteractionResult use(MixingBowlBlockEntity be, ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (stack.isEmpty()) {
             if (player.isShiftKeyDown()) {
-                List<ItemStack> items = new ArrayList<>();
-                for (int i = 0; i < be.getInventory().getSlots(); i++) {
-                    items.add(be.getInventory().getStackInSlot(i));
-                }
-
-                MixingBowlRecipeInput input = new MixingBowlRecipeInput(items, be.getFluidTank().getFluid());
-                var match = be.getLevel().getRecipeManager().getRecipeFor(ModRecipes.MIXING_BOWL_TYPE.get(), input, level);
-                match.ifPresent(recipe ->
-                        MixingBowlActions.mix(be, recipe, player));
+                MixingBowlActions.mix(be, player);
                 return ItemInteractionResult.CONSUME;
             }
 
@@ -60,8 +53,9 @@ public class MixingBowlUseItemOn {
                 return ItemInteractionResult.CONSUME_PARTIAL;
             }
             else {
-                if (stack.is(ModItemTags.MIXING_BOWL_INPUT)) {
-                    MixingBowlActions.insert(be.getInventory(), stack, player, hand);
+                var data = stack.getItemHolder().getData(Gateaux.GATEAU_BY_ITEM);
+                if (data != null || stack.is(ModItemTags.MIXING_BOWL_INPUT)) {
+                    MixingBowlActions.insert(be, stack, player, hand);
                     return ItemInteractionResult.CONSUME_PARTIAL;
                 }
                 else if (stack.is(ModItemTags.MOD_DEBUG)) {

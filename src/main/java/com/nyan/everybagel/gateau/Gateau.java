@@ -37,39 +37,39 @@ public class Gateau {
         }
     }
 
-    public static class Key implements Comparable<Key> {
-        private final ResourceKey<Gateau> key;
+    public record Key(ResourceKey<Gateau> key, int quality, int quantity) implements Comparable<Key> {
+            public static final Codec<Key> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                    ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).fieldOf("key").forGetter(Key::key),
+                    Codec.INT.optionalFieldOf("quality", 1).forGetter(Key::quality),
+                    Codec.INT.optionalFieldOf("quantity", 1).forGetter(Key::quantity)
+            ).apply(inst, Key::new));
 
-        public static final Codec<Key> CODEC = ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).xmap(Key::new, Key::getKey);
+            public Key(ResourceKey<Gateau> key) {
+                this(key, 1, 1);
+            }
 
-        public Key(ResourceKey<Gateau> key) {
-            this.key = key;
+            @Override
+            public int compareTo(@NotNull Gateau.Key o) {
+                var opath = o.key.location().getPath();
+                var mepath = this.key.location().getPath();
+                return opath.compareTo(mepath);
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o == null || getClass() != o.getClass()) return false;
+                Key key1 = (Key) o;
+                return Objects.equals(key, key1.key);
+            }
+
+            @Override
+            public int hashCode() {
+                return key.location().hashCode();
+            }
+
+            @Override
+            public String toString() {
+                return key.toString() + " " + quality + " " + quantity;
+            }
         }
-
-        public ResourceKey<Gateau> getKey() { return key; }
-
-        @Override
-        public int compareTo(@NotNull Gateau.Key o) {
-            var opath = o.key.location().getPath();
-            var mepath =  this.key.location().getPath();
-            return opath.compareTo(mepath);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
-            Key key1 = (Key) o;
-            return Objects.equals(key, key1.key);
-        }
-
-        @Override
-        public int hashCode() {
-            return key.location().hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return key.toString();
-        }
-    }
 }

@@ -15,8 +15,6 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
-import static java.lang.Math.min;
-
 public class MixingBowlBlockEntity extends BlockEntity {
     public static final int ITEM_SLOTS = 5;
     public static final int FLUID_CAPACITY = 4000;
@@ -34,18 +32,12 @@ public class MixingBowlBlockEntity extends BlockEntity {
     }
 
     public boolean mix(int increment) {
-        if (currentRecipe == null) {
-            return false;
-        }
         recipeProgress = recipeProgress + increment;
         return recipeProgress >= RECIPE_COMPLETE;
     }
 
-    public void setRecipe(MixingBowlRecipe recipe) {
-        if (currentRecipe != recipe) {
-            currentRecipe = recipe;
-            recipeProgress = 0;
-        }
+    public void resetProgress() {
+        recipeProgress = 0;
     }
 
     @Override

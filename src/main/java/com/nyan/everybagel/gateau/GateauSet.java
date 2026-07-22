@@ -1,10 +1,7 @@
 package com.nyan.everybagel.gateau;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -40,7 +37,7 @@ public class GateauSet implements Set<Gateau.Key> {
     }
 
     public static GateauSet of(GateauDefaults... defaults) {
-        return of(Arrays.stream(defaults).map(GateauDefaults::getKey).collect(Collectors.toList()));
+        return of(Arrays.stream(defaults).map(GateauDefaults::getGateauKey).collect(Collectors.toList()));
     }
 
     private void reXor() {
@@ -144,11 +141,12 @@ public class GateauSet implements Set<Gateau.Key> {
 
     public String getName() {
         if (dirty) {
+            // todo cleanup
             if (size() == 1) {
                 var connection = Minecraft.getInstance();
-                if (connection != null) {
+                if (connection != null && connection.getConnection() != null) {
                     connection.getConnection().registryAccess().registry(Gateaux.GATEAU_REGISTRY_KEY).ifPresent(
-                            gateaux -> printName = gateaux.get(this.set.first().getKey()).getId());
+                            gateaux -> printName = gateaux.get(this.set.first().key()).getId());
                 }
                 else {
                     printName = "ERROR";
