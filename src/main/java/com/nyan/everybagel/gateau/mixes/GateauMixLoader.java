@@ -13,6 +13,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class GateauMixLoader extends SimpleJsonResourceReloadListener {
@@ -31,15 +32,15 @@ public class GateauMixLoader extends SimpleJsonResourceReloadListener {
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
-        ImmutableMap.Builder<GateauSet, GateauSet> builder = ImmutableMap.builder();
+        HashMap<GateauSet, GateauSet> map = new HashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
             ResourceLocation loc = entry.getKey();
             JsonElement json = entry.getValue();
             GateauMixes.CODEC.parse(JsonOps.INSTANCE, json)
                     .resultOrPartial(onError -> LOGGER.warn("Could not parse GateauMixes with json id {}, err {}", loc, onError))
-                    .ifPresent(map -> map.forEach(builder::put));
+                    .ifPresent(map::putAll);
         }
-        this.mixes = builder.build();
+        this.mixes = map;
     }
 
     public Map<GateauSet, GateauSet> getMixes() { return mixes; }
