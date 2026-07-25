@@ -21,12 +21,12 @@ public class GateauAssembler {
         var result = GateauSet.of();
         for (int i = 0; i < inputs.getSlots(); i++) {
             var stack = inputs.getStackInSlot(i);
-            Gateau.Key key;
+            GateauSet set;
             if (stack.has(ModComponents.GATEAU)) {
                 result.addAll(stack.get(ModComponents.GATEAU));
             }
-            else if ((key = stack.getItemHolder().getData(Gateaux.GATEAU_BY_ITEM)) != null) {
-                result.add(key);
+            else if ((set = stack.getItemHolder().getData(Gateaux.GATEAU_BY_ITEM)) != null) {
+                result.addAll(set);
             }
         }
         return result;

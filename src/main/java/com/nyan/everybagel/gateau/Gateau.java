@@ -37,39 +37,38 @@ public class Gateau {
         }
     }
 
-    public record Key(ResourceKey<Gateau> key, int quality, int quantity) implements Comparable<Key> {
-            public static final Codec<Key> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                    ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).fieldOf("key").forGetter(Key::key),
-                    Codec.INT.optionalFieldOf("quality", 1).forGetter(Key::quality),
-                    Codec.INT.optionalFieldOf("quantity", 1).forGetter(Key::quantity)
-            ).apply(inst, Key::new));
+    public record Key(ResourceKey<Gateau> key) implements Comparable<Key> {
+        public static final Codec<Key> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).fieldOf("key").forGetter(Key::key)
+        ).apply(inst, Key::new));
 
-            public Key(ResourceKey<Gateau> key) {
-                this(key, 1, 1);
-            }
-
-            @Override
-            public int compareTo(@NotNull Gateau.Key o) {
-                var opath = o.key.location().getPath();
-                var mepath = this.key.location().getPath();
-                return opath.compareTo(mepath);
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (o == null || getClass() != o.getClass()) return false;
-                Key key1 = (Key) o;
-                return Objects.equals(key, key1.key);
-            }
-
-            @Override
-            public int hashCode() {
-                return key.location().hashCode();
-            }
-
-            @Override
-            public String toString() {
-                return key.toString() + " " + quality + " " + quantity;
-            }
+        @Override
+        public int compareTo(@NotNull Gateau.Key o) {
+            var opath = o.key.location().getPath();
+            var mepath = this.key.location().getPath();
+            return opath.compareTo(mepath);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Key)) {
+                return false;
+            }
+            return sameKey((Key) o);
+        }
+
+        public boolean sameKey(Key other) {
+            return Objects.equals(key, other.key);
+        }
+
+        @Override
+        public int hashCode() {
+            return key.location().hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return key.toString();
+        }
+    }
 }

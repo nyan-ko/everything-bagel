@@ -3,7 +3,7 @@ package com.nyan.everybagel;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class PowerSetIterator<T> implements Iterator<Set<T>> {
+public class PowerSetIterator<T> implements Iterator<Collection<T>> {
     private final int n;
     private final List<T> list;
     private static final Map<Integer, Integer> BIT_TO_INDEX = Map.of(
@@ -20,9 +20,9 @@ public class PowerSetIterator<T> implements Iterator<Set<T>> {
 
     private int i;
     private int prev;
-    private final Set<T> cur;
+    private final Collection<T> cur;
 
-    public PowerSetIterator(Collection<T> objs, Supplier<? extends Set<T>> constructor) {
+    public PowerSetIterator(Collection<T> objs, Supplier<? extends Collection<T>> constructor) {
         this.n = objs.size();
         this.list = new ArrayList<>(objs);
 
@@ -37,7 +37,7 @@ public class PowerSetIterator<T> implements Iterator<Set<T>> {
     }
 
     @Override
-    public Set<T> next() {
+    public Collection<T> next() {
         int grey = i ^ (i >> 1);
         int diff = grey ^ prev;
 

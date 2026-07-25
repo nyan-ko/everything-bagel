@@ -11,6 +11,7 @@ import net.minecraft.util.FastColor;
 import net.minecraft.world.item.Item;
 
 import java.util.List;
+import java.util.Map;
 
 public enum GateauDefaults {
     WOOD("wood", Gateau.Visual.of(140, 70, 0, "base"), List.of(GateauPowers.PLACEHOLDER)),
@@ -57,7 +58,9 @@ public enum GateauDefaults {
 
     public TagKey<Item> getTag() { return tag; }
     public Gateau.Key getGateauKey() { return new Gateau.Key(key); }
-    public Gateau.Key getGateauKey(int quality, int quantity) { return new Gateau.Key(key, quality, quantity); }
+    public GateauSet getGateauSet(int quality, int quantity) { return GateauSet.of(Map.of(new Gateau.Key(key), new GateauSet.QualityQuantity(quality, quantity))); }
+    public GateauSet getGateauSet() { return getGateauSet(1, 1); }
+
     public Gateau.Visual getLook() { return look; }
     public List<ResourceKey<GateauPower>> getPowers() { return powers; }
 

@@ -1,50 +1,42 @@
 package com.nyan.everybagel.gateau;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GateauSet implements Set<Gateau.Key> {
-    private final TreeSet<Gateau.Key> set;
-    private String printName;
+public class GateauSet implements Collection<Map.Entry<Gateau.Key, GateauSet.QualityQuantity>> {
+    private final TreeMap<Gateau.Key, QualityQuantity> map;
     private boolean dirty;
+    private String printName;
     private int xor;
 
-    public static final Codec<GateauSet> CODEC = Gateau.Key.CODEC.listOf().xmap(GateauSet::of, set -> set.stream().toList());
+    public static final Codec<GateauSet> CODEC = Codec.pair(
+            Gateau.Key.CODEC,
+            QualityQuantity.CODEC
+    ).listOf().xmap(list -> of(list.stream().collect(Collectors.toMap(Pair::getFirst, Pair::getSecond))), map -> map.entrySet().stream().map(entry -> new Pair<>(entry.getKey(), entry.getValue())).collect(Collectors.toList()));
+
     public static final GateauSet EMPTY = of();
 
-    private GateauSet(TreeSet<Gateau.Key> set) {
-        this.set = set;
+    private GateauSet(TreeMap<Gateau.Key, QualityQuantity> map) {
+        this.map = map;
         this.dirty = true;
-        this.xor = 0;
-        reXor();
         this.printName = getName();
+        this.xor = 0;
     }
 
-    public static GateauSet of() {
-        return of(Collections.emptySet());
-    }
-
-    public static GateauSet of(Collection<Gateau.Key> keys) {
-        return new GateauSet(new TreeSet<>(keys));
-    }
-
-    public static GateauSet of(Gateau.Key... keys) {
-        return of(Arrays.asList(keys));
-    }
-
-    public static GateauSet of(GateauDefaults... defaults) {
-        return of(Arrays.stream(defaults).map(GateauDefaults::getGateauKey).collect(Collectors.toList()));
-    }
-
-    private void reXor() {
-        xor = 0;
-        for (Gateau.Key key : this.set) {
-            xor ^= key.hashCode();
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GateauSet) {
+            GateauSet other = (GateauSet) obj;
+            return this.map.keySet().equals(other.map.keySet());
         }
+        return false;
     }
 
     @Override
@@ -56,116 +48,162 @@ public class GateauSet implements Set<Gateau.Key> {
         return xor;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof GateauSet && obj.hashCode() == this.hashCode();
+    private void reXor() {
+        xor = 0;
+        for (Gateau.Key key : map.keySet()) {
+            xor ^= key.hashCode();
+        }
+    }
+
+    public static GateauSet of(Map<Gateau.Key, QualityQuantity> map) {
+        return new GateauSet(new TreeMap<>(map));
+    }
+
+    public static GateauSet of() {
+        return of(List.of());
+    }
+
+    public static GateauSet of(Collection<Gateau.Key> keys) {
+        TreeMap<Gateau.Key, QualityQuantity> map = new TreeMap<>();
+        for (Gateau.Key key : keys) {
+            map.put(key, new QualityQuantity(1, 1));
+        }
+        return of(map);
+    }
+
+    public static GateauSet of(Gateau.Key... keys) {
+        return of(Arrays.asList(keys));
+    }
+
+    public static GateauSet of(GateauDefaults... defaults) {
+        return of(Arrays.stream(defaults).map(GateauDefaults::getGateauKey).toList());
     }
 
     @Override
     public int size() {
-        return set.size();
+        return map.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return set.isEmpty();
+        return map.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return set.contains(o);
+        return o instanceof Gateau.Key && map.containsKey(o);
     }
 
     @Override
-    public @NotNull Iterator<Gateau.Key> iterator() {
-        return set.iterator();
+    public @NotNull Iterator<Map.Entry<Gateau.Key, QualityQuantity>> iterator() {
+        return map.entrySet().iterator();
     }
 
     @Override
     public @NotNull Object[] toArray() {
-        return set.toArray();
+        return map.entrySet().toArray();
     }
 
     @Override
     public @NotNull <T> T[] toArray(@NotNull T[] a) {
-        return set.toArray(a);
+        throw new UnsupportedOperationException();
+    }
+
+    public void put(Gateau.Key key, QualityQuantity value) {
+        dirty = true;
+        map.merge(key, value, QualityQuantity::add);
     }
 
     @Override
-    public boolean add(Gateau.Key key) {
-        if (set.add(key)) {
-            xor ^= key.hashCode();
-            return true;
-        }
-        return false;
+    public boolean add(Map.Entry<Gateau.Key, QualityQuantity> entry) {
+        put(entry.getKey(), entry.getValue());
+        return true;
     }
 
     @Override
     public boolean remove(Object o) {
-        if (set.remove(o)) {
-            xor ^= o.hashCode();
-            return true;
+        if (!(o instanceof Map.Entry)) {
+            throw new UnsupportedOperationException();
         }
-        return false;
+        var entry = (Map.Entry<Gateau.Key, QualityQuantity>) o;
+        dirty = true;
+        return map.remove(entry.getKey(), entry.getValue());
     }
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return set.containsAll(c);
+        return map.keySet().containsAll(c);
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends Gateau.Key> c) {
-        dirty = set.addAll(c);
-        return dirty;
-    }
-
-    @Override
-    public boolean retainAll(@NotNull Collection<?> c) {
-        dirty = set.retainAll(c);
-        return dirty;
+    public boolean addAll(@NotNull Collection<? extends Map.Entry<Gateau.Key, QualityQuantity>> c) {
+        dirty = true;
+        for (Map.Entry<Gateau.Key, QualityQuantity> entry : c) {
+            put(entry.getKey(), entry.getValue());
+        }
+        return true;
     }
 
     @Override
     public boolean removeAll(@NotNull Collection<?> c) {
-        dirty = set.removeAll(c);
-        return dirty;
+        dirty = true;
+        return map.keySet().removeAll(c);
+    }
+
+    @Override
+    public boolean retainAll(@NotNull Collection<?> c) {
+        dirty = true;
+        return map.keySet().retainAll(c);
     }
 
     @Override
     public void clear() {
-        dirty = false;
-        xor = 0;
-        set.clear();
+        dirty = true;
+        map.clear();
+    }
+
+    public Set<Map.Entry<Gateau.Key, QualityQuantity>> entrySet() {
+        return map.entrySet();
     }
 
     public String getName() {
         if (dirty) {
-            // todo cleanup
-            if (size() == 1) {
-                var connection = Minecraft.getInstance();
-                if (connection != null && connection.getConnection() != null) {
-                    connection.getConnection().registryAccess().registry(Gateaux.GATEAU_REGISTRY_KEY).ifPresent(
-                            gateaux -> printName = gateaux.get(this.set.first().key()).getId());
-                }
-                else {
-                    printName = "ERROR";
-                }
-            }
-            else if (size() > 1) {
+            // todo actual naming
+            if (size() > 1) {
                 printName = "many";
             }
+            else if (size() == 1) {
+                var key = map.keySet().iterator().next();
+
+                var connection = Minecraft.getInstance().getConnection();
+                if (connection != null) {
+                    var registry = connection.registryAccess().registry(Gateaux.GATEAU_REGISTRY_KEY);
+                    registry.ifPresent(r -> printName = r.get(key.key()).getId());
+                }
+                else {
+                    printName = "error";
+                }
+            }
             else {
-                printName = "EMPTY2";
+                printName = "none";
             }
         }
         return printName;
     }
 
-    @Override
-    public String toString() {
-        return set.toString();
-    }
+    // todo need a better name
+    public record QualityQuantity(int quality, int quantity) {
+        public static final Codec<QualityQuantity> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                Codec.INT.optionalFieldOf("quality", 1).forGetter(QualityQuantity::quality),
+                Codec.INT.optionalFieldOf("quantity", 1).forGetter(QualityQuantity::quantity)
+        ).apply(inst, QualityQuantity::new));
 
-    public TreeSet<Gateau.Key> getSet() { return set; }
+        public QualityQuantity add(QualityQuantity other) {
+            return new QualityQuantity(Math.max(quality, other.quality), quantity + other.quantity);
+        }
+
+        public QualityQuantity subtract(QualityQuantity other) {
+            return new QualityQuantity(Math.max(quality, other.quality), quantity - other.quantity);
+        }
+    }
 }
