@@ -22,12 +22,6 @@ public class GateauMixProvider implements DataProvider {
         this.packOutput = packOutput;
     }
 
-//    public static Map.Entry<GateauSet, GateauSet> squish(List<Gateau.Key> inputs, List<Gateau.Key> outputs) {
-//        return Map.entry(new GateauSet(new TreeSet<>(inputs)), new GateauSet(new TreeSet<>(outputs)));
-//    }
-
-//    public static Map.Entry
-
     private static Map<GateauSet, GateauSet> getContents() {
         return ImmutableMap.<GateauSet, GateauSet>builder()
                 .put(GateauSet.of(GateauDefaults.WOOD, GateauDefaults.STONE), GateauSet.of(GateauDefaults.COAL))

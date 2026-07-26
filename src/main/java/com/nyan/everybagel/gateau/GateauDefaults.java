@@ -41,7 +41,6 @@ public enum GateauDefaults {
 
     private final TagKey<Item> tag;
     private final ResourceKey<Gateau> key;
-//    private final Gateau.Key gateau;
     private final Gateau.Visual look;
     private final List<ResourceKey<GateauPower>> powers;
 

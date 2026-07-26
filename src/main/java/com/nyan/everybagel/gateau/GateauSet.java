@@ -191,6 +191,13 @@ public class GateauSet implements Collection<Map.Entry<Gateau.Key, GateauSet.Qua
         return printName;
     }
 
+    @Override
+    public String toString() {
+        return "GateauSet{" +
+                "map=" + map +
+                '}';
+    }
+
     // todo need a better name
     public record QualityQuantity(int quality, int quantity) {
         public static final Codec<QualityQuantity> CODEC = RecordCodecBuilder.create(inst -> inst.group(
