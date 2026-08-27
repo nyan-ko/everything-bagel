@@ -3,6 +3,9 @@ package com.nyan.everybagel.gateau;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.nyan.everybagel.gateau.powers.GateauPower;
+import com.nyan.everybagel.gateau.powers.PowerSet;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.FastColor;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +15,9 @@ import java.util.*;
 public class Gateau {
     private final String id;
     private final Visual look;
-    private final List<ResourceKey<GateauPower>> powers;
+    private final PowerSet powers;
 
-    public Gateau(String id, Visual look, List<ResourceKey<GateauPower>> powers) {
+    public Gateau(String id, Visual look, PowerSet powers) {
         this.id = id;
         this.look  = look;
         this.powers = powers;
@@ -22,7 +25,7 @@ public class Gateau {
 
     public String getId() { return id; }
     public Visual getLook() { return look; }
-    public List<ResourceKey<GateauPower>> getPowers() { return powers; }
+    public PowerSet getPowers() { return powers; }
 
     public record Visual(int color, String variation) {
         public static final Codec<Visual> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -37,13 +40,19 @@ public class Gateau {
         }
     }
 
-    public record Key(ResourceKey<Gateau> key) implements Comparable<Key> {
-        public static final Codec<Key> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).fieldOf("key").forGetter(Key::key)
-        ).apply(inst, Key::new));
+    public static class Resource implements Comparable<Resource> {
+        public static final Codec<Resource> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).fieldOf("key").forGetter(Resource::getKey)
+        ).apply(instance, Resource::new));
+
+        private final ResourceKey<Gateau> key;
+
+        public Resource(ResourceKey<Gateau> key) {
+            this.key = key;
+        }
 
         @Override
-        public int compareTo(@NotNull Gateau.Key o) {
+        public int compareTo(@NotNull Gateau.Resource o) {
             var opath = o.key.location().getPath();
             var mepath = this.key.location().getPath();
             return opath.compareTo(mepath);
@@ -51,13 +60,13 @@ public class Gateau {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof Key)) {
+            if (!(o instanceof Resource)) {
                 return false;
             }
-            return sameKey((Key) o);
+            return sameKey((Resource) o);
         }
 
-        public boolean sameKey(Key other) {
+        public boolean sameKey(Resource other) {
             return Objects.equals(key, other.key);
         }
 
@@ -69,6 +78,10 @@ public class Gateau {
         @Override
         public String toString() {
             return key.toString();
+        }
+
+        public ResourceKey<Gateau> getKey() {
+            return key;
         }
     }
 }

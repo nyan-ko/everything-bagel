@@ -29,7 +29,7 @@ public class GateauPowers {
 
     public static final Codec<GateauPower> CODEC = ResourceLocation.CODEC.dispatch(
             "type",
-            GateauPower::base,
+            GateauPower::getBase,
             POWER_CODECS_BY_RESOURCE::get
     );
 

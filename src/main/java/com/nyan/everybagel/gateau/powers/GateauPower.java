@@ -3,42 +3,36 @@ package com.nyan.everybagel.gateau.powers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.nyan.everybagel.EverythingBagel;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
+public abstract class GateauPower {
+    protected GateauPower() {
 
-public interface GateauPower {
-    MapCodec<?> codec();
+    }
 
-    ResourceLocation base();
+    public static class Effect<D extends Data> extends MobEffect {
+        protected Effect(MobEffectCategory category, int color) {
+            super(category, color);
+        }
 
-//    record Power1(int param1) implements GateauPower {
-//        public static final MapCodec<Power1> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-//                Codec.INT.fieldOf("param1").forGetter(Power1::param1)
-//        ).apply(instance, Power1::new));
-//
-//        public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, "power_1");
-//
-//        @Override
-//        public MapCodec<Power1> codec() { return CODEC; }
-//
-//        @Override
-//        public ResourceLocation base() { return ID; }
-//    }
-//
-//    record Power2(int param1, Optional<Integer> param2) implements GateauPower {
-//        public static final MapCodec<Power2> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-//                Codec.INT.fieldOf("param1").forGetter(Power2::param1),
-//                Codec.INT.optionalFieldOf("param2").forGetter(Power2::param2)
-//        ).apply(instance, Power2::new));
-//
-//        public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, "power_2");
-//
-//        @Override
-//        public MapCodec<Power2> codec() { return CODEC; }
-//
-//        @Override
-//        public ResourceLocation base() { return ID; }
-//    }
+    }
+
+    public abstract ResourceLocation getBase();
+
+    public interface Data { }
+
+    public record Resource(ResourceKey<GateauPower> key) implements Comparable<Resource> {
+        public static final Codec<Resource> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ResourceKey.codec(GateauPowers.GATEAU_POWER_REGISTRY_KEY).fieldOf("key").forGetter(Resource::key)
+        ).apply(instance, Resource::new));
+
+        @Override
+        public int compareTo(@NotNull GateauPower.Resource o) {
+            return key.compareTo(o.key);
+        }
+    }
 }

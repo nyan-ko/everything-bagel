@@ -3,6 +3,7 @@ package com.nyan.everybagel.gateau;
 import com.nyan.everybagel.EverythingBagel;
 import com.nyan.everybagel.gateau.powers.GateauPower;
 import com.nyan.everybagel.gateau.powers.GateauPowers;
+import com.nyan.everybagel.gateau.powers.PowerSet;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -14,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 public enum GateauDefaults {
-    WOOD("wood", Gateau.Visual.of(140, 70, 0, "base"), List.of(GateauPowers.PLACEHOLDER)),
-    STONE("stone", Gateau.Visual.of(114, 114, 114, "coarse"), List.of(GateauPowers.PLACEHOLDER)),
-    GRAVEL("gravel", Gateau.Visual.of(104, 104, 104, "coarse"), List.of(GateauPowers.PLACEHOLDER)),
+    WOOD("wood", Gateau.Visual.of(140, 70, 0, "base"), PowerSet.of(new GateauPower.Resource(GateauPowers.PLACEHOLDER))),
+    STONE("stone", Gateau.Visual.of(114, 114, 114, "coarse"), PowerSet.of(new GateauPower.Resource(GateauPowers.PLACEHOLDER))),
+    GRAVEL("gravel", Gateau.Visual.of(104, 104, 104, "coarse"), PowerSet.of(new GateauPower.Resource(GateauPowers.PLACEHOLDER))),
     SAND("sand"),
     DIRT("dirt"),
 
@@ -42,13 +43,13 @@ public enum GateauDefaults {
     private final TagKey<Item> tag;
     private final ResourceKey<Gateau> key;
     private final Gateau.Visual look;
-    private final List<ResourceKey<GateauPower>> powers;
+    private final PowerSet powers;
 
     GateauDefaults(String id) {
-        this(id, Gateau.Visual.PLACEHOLDER, List.of());
+        this(id, Gateau.Visual.PLACEHOLDER, PowerSet.EMPTY);
     }
 
-    GateauDefaults(String id, Gateau.Visual look, List<ResourceKey<GateauPower>> powers) {
+    GateauDefaults(String id, Gateau.Visual look, PowerSet powers) {
         this.tag = createTagKey(id);
         this.key = createResourceKey(id);
         this.look = look;
@@ -56,12 +57,12 @@ public enum GateauDefaults {
     }
 
     public TagKey<Item> getTag() { return tag; }
-    public Gateau.Key getGateauKey() { return new Gateau.Key(key); }
-    public GateauSet getGateauSet(int quality, int quantity) { return GateauSet.of(Map.of(new Gateau.Key(key), new GateauSet.QualityQuantity(quality, quantity))); }
+    public Gateau.Resource getGateauKey() { return new Gateau.Resource(key); }
+    public GateauSet getGateauSet(int quality, int quantity) { return GateauSet.of(Map.of(new Gateau.Resource(key), new GateauSet.QualityQuantityPair(quality, quantity))); }
     public GateauSet getGateauSet() { return getGateauSet(1, 1); }
 
     public Gateau.Visual getLook() { return look; }
-    public List<ResourceKey<GateauPower>> getPowers() { return powers; }
+    public PowerSet getPowers() { return powers; }
 
     private static ResourceKey<Gateau> createResourceKey(String id) {
         return ResourceKey.create(Gateaux.GATEAU_REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath(EverythingBagel.MOD_ID, "gateau/" + id));

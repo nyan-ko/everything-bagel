@@ -121,8 +121,8 @@ public class GateauMix {
 //    }
 
     public record Output(List<ResourceKey<Gateau>> outputs) {
-        public static Codec<Output> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+        public static Codec<Output> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceKey.codec(Gateaux.GATEAU_REGISTRY_KEY).listOf().fieldOf("outputs").forGetter(Output::outputs)
-        ).apply(inst, Output::new));
+        ).apply(instance, Output::new));
     }
 }
