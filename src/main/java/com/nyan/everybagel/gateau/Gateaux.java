@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.nyan.everybagel.EverythingBagel;
 import com.nyan.everybagel.gateau.powers.GateauPowers;
+import com.nyan.everybagel.gateau.powers.PowerSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -29,7 +30,7 @@ public class Gateaux {
             instance.group(
                     Codec.STRING.fieldOf("id").forGetter(Gateau::getId),
                     Gateau.Visual.CODEC.fieldOf("look").forGetter(Gateau::getLook),
-                    ResourceKey.codec(GateauPowers.GATEAU_POWER_REGISTRY_KEY).listOf().fieldOf("powers").forGetter(Gateau::getPowers)
+                    PowerSet.CODEC.fieldOf("powers").forGetter(Gateau::getPowers)
             ).apply(instance, Gateau::new)
     );
 
