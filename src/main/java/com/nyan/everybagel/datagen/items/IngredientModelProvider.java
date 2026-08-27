@@ -35,12 +35,14 @@ public class IngredientModelProvider extends ItemModelProvider {
     public static void registerTints(RegisterColorHandlersEvent.Item event) {
         event.register(IngredientColor::getTint, ModItems.FLOUR.value());
         event.register(IngredientColor::getTint, ModItems.DOUGH.value());
+        event.register(IngredientColor::getTint, ModItems.BREAD.value());
     }
 
     @Override
     protected void registerModels() {
         variedItem(ModItems.FLOUR.get(), "base", "coarse");
         variedItem(ModItems.DOUGH.get(), "base");
+        variedItem(ModItems.BREAD.get(), "base");
     }
 
     @Override
