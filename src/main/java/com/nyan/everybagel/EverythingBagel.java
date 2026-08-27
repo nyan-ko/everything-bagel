@@ -9,9 +9,13 @@ import com.nyan.everybagel.gateau.mixes.GateauMixLoader;
 import com.nyan.everybagel.items.ModItems;
 import com.nyan.everybagel.items.Tabs;
 import com.nyan.everybagel.recipes.ModRecipes;
+import com.nyan.everybagel.recipes.components.ComponentTransformers;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -26,8 +30,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
-import java.util.List;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(EverythingBagel.MOD_ID)
@@ -53,10 +55,13 @@ public class EverythingBagel {
         ModComponents.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModRecipes.register(modEventBus);
+        Effects.register(modEventBus);
+        ComponentTransformers.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
         modEventBus.addListener(this::registerCapabilities);
+        modEventBus.addListener(this::registerRegistries);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -73,12 +78,30 @@ public class EverythingBagel {
             var registry = provider.lookupOrThrow(Gateaux.GATEAU_REGISTRY_KEY);
             registry.listElements().forEach(ref -> {
                 var gateau = ref.value();
-                var stack = ModItems.FLOUR.toStack();
-                stack.set(ModComponents.GATEAU, GateauSet.of(new Gateau.Key(ref.key())));
+                var stack = new ItemStack(ModItems.FLOUR.get());
+                var gateauSet = GateauSet.of(new Gateau.Resource(ref.key()));
+//                gateauSet.resolve(provider);
+                stack.set(ModComponents.GATEAU, gateauSet);
                 stack.set(ModComponents.INGREDIENT, gateau.getLook().variation());
                 stack.set(ModComponents.INGREDIENT_TINT, gateau.getLook().color());
                 event.accept(stack);
             });
+            var stack = new ItemStack(ModItems.BREAD.get());
+            stack.set(ModComponents.INGREDIENT, "base");
+            stack.set(ModComponents.INGREDIENT_TINT, -1);
+            event.accept(stack);
+//            var provider = event.getParameters().holders();
+//            var registry = provider.lookupOrThrow(Gateaux.GATEAU_REGISTRY_KEY);
+//            registry.listElements().forEach(ref -> {
+//                var gateau = ref.value();
+//                var stack = ModItems.FLOUR.toStack();
+//                var gateauSet = GateauSet.of(new Gateau.Resource(ref.key()));
+//                gateauSet.resolve();
+//                stack.set(ModComponents.GATEAU, );
+//                stack.set(ModComponents.INGREDIENT, gateau.getLook().variation());
+//                stack.set(ModComponents.INGREDIENT_TINT, gateau.getLook().color());
+//                event.accept(stack);
+//            });
         }
 
 //        else if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
@@ -87,10 +110,10 @@ public class EverythingBagel {
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-
-    }
+//    @SubscribeEvent
+//    public void onServerStarting(ServerStartingEvent event) {
+//
+//    }
 
     @SubscribeEvent
     public void onAddReloadListener(AddReloadListenerEvent event) {
@@ -103,5 +126,9 @@ public class EverythingBagel {
                 ModBlockEntities.MIXING_BOWL_BE.get(),
                 (be, side) -> be.getFluidTank()
         );
+    }
+
+    public void registerRegistries(NewRegistryEvent event) {
+        event.register(ComponentTransformers.COMPONENT_TRANSFORMER_TYPES);
     }
 }
