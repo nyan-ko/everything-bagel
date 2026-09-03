@@ -1,22 +1,20 @@
 package com.nyan.everybagel.recipes.components;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 
-import java.util.List;
-
-public abstract class ComponentCarryingRecipe<T extends ComponentRecipeInput> implements Recipe<T> {
+public abstract class ComponentRecipe<T extends ComponentRecipeInput> implements Recipe<T> {
     protected final ComponentTransformerList transformers;
     protected final ItemStack output;
 
-    protected ComponentCarryingRecipe(ItemStack output) {
+    protected ComponentRecipe(ItemStack output) {
         this.transformers = new ComponentTransformerList();
         this.output = output;
     }
 
-    protected ComponentCarryingRecipe(ComponentTransformerList transformers, ItemStack output) {
+    protected ComponentRecipe(ComponentTransformerList transformers, ItemStack output) {
         this.transformers = transformers;
         this.output = output;
     }

@@ -97,7 +97,7 @@ public class MixingBowlRecipe implements Recipe<MixingBowlRecipeInput> {
     public ItemStack getOutput() { return output; }
 
     public static class Serializer implements RecipeSerializer<MixingBowlRecipe> {
-        public static final MapCodec<MixingBowlRecipe> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
+        public static final MapCodec<MixingBowlRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Ingredient.CODEC_NONEMPTY
                         .listOf()
                         .fieldOf("item_inputs")
@@ -116,7 +116,7 @@ public class MixingBowlRecipe implements Recipe<MixingBowlRecipeInput> {
                         .forGetter(MixingBowlRecipe::getItemIngredients),
                 FluidIngredient.CODEC.fieldOf("fluid_input").forGetter(MixingBowlRecipe::getFluidIngredient),
                 ItemStack.CODEC.fieldOf("item_output").forGetter(MixingBowlRecipe::getOutput)
-        ).apply(inst, MixingBowlRecipe::new));
+        ).apply(instance, MixingBowlRecipe::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, MixingBowlRecipe> STREAM_CODEC = StreamCodec.of(
                 MixingBowlRecipe.Serializer::toNetwork, MixingBowlRecipe.Serializer::fromNetwork

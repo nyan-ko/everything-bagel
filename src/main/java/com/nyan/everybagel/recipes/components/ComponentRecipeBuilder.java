@@ -1,11 +1,9 @@
-package com.nyan.everybagel.recipes;
+package com.nyan.everybagel.recipes.components;
 
-import com.nyan.everybagel.recipes.components.ComponentCarryingRecipe;
-import com.nyan.everybagel.recipes.components.ComponentTransformer;
-import com.nyan.everybagel.recipes.components.ComponentTransformerList;
+import com.nyan.everybagel.recipes.SimpleRecipeBuilder;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ComponentRecipeBuilder<T extends ComponentCarryingRecipe<?>> extends SimpleRecipeBuilder<T> {
+public abstract class ComponentRecipeBuilder<T extends ComponentRecipe<?>> extends SimpleRecipeBuilder<T> {
     protected final ComponentTransformerList transformers;
 
     protected ComponentRecipeBuilder(ItemStack output) {

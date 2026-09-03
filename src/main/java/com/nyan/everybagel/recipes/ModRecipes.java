@@ -2,7 +2,6 @@ package com.nyan.everybagel.recipes;
 
 import com.nyan.everybagel.EverythingBagel;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.MinecartItem;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.bus.api.IEventBus;
@@ -31,6 +30,14 @@ public class ModRecipes {
                 }
             }
     );
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AugmentedCookingRecipe>> AUGMENTED_SMELTING_SERIALIZER = SERIALIZERS.register("augmented_smelting", AugmentedCookingRecipe.Serializer::new);
+    public static final DeferredHolder<RecipeType<?>, RecipeType<AugmentedCookingRecipe>> AUGMENTED_SMELTING_TYPE = TYPES.register("augmented_smelting", () -> new RecipeType<AugmentedCookingRecipe>() {
+        @Override
+        public String toString() {
+            return "augmented_smelting";
+        }
+    });
 
     public static void register(IEventBus bus) {
         SERIALIZERS.register(bus);
