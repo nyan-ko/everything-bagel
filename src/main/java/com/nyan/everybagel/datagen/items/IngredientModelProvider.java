@@ -29,6 +29,7 @@ public class IngredientModelProvider extends ItemModelProvider {
         var builder = getBuilder("item/" + item.getPath())
                 .customLoader(IngredientModelLoader::new).end();
         Arrays.stream(variations).forEach((name) -> builder.texture(name, "item/" + item.getPath() + "/" + name));
+        builder.texture("missing", "item/" + item.getPath() + "/missing");
         return builder;
     }
 

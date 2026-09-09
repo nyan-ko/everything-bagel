@@ -76,7 +76,7 @@ public class DummyBakedModel implements IDynamicBakedModel {
     public static class ItemModelOverride extends ItemOverrides {
         @Override
         public BakedModel resolve(BakedModel model, ItemStack stack, ClientLevel level, LivingEntity entity, int seed) {
-            var variation = stack.get(ModComponents.INGREDIENT);
+            var variation = stack.getOrDefault(ModComponents.INGREDIENT, "missing");
             if (model instanceof DummyBakedModel) {
                 return ((DummyBakedModel) model).getOrDefault(variation, model);
             }
