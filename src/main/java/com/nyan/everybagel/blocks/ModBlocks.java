@@ -32,7 +32,7 @@ public class ModBlocks {
         ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 
-    public static void register(IEventBus modEventBus) {
-        BLOCKS.register(modEventBus);
+    public static void register(IEventBus bus) {
+        BLOCKS.register(bus);
     }
 }

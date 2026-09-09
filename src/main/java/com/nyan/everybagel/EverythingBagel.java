@@ -10,7 +10,6 @@ import com.nyan.everybagel.items.ModItems;
 import com.nyan.everybagel.items.Tabs;
 import com.nyan.everybagel.recipes.ModRecipes;
 import com.nyan.everybagel.recipes.components.ComponentTransformers;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -29,7 +28,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(EverythingBagel.MOD_ID)
@@ -129,6 +127,6 @@ public class EverythingBagel {
     }
 
     public void registerRegistries(NewRegistryEvent event) {
-        event.register(ComponentTransformers.COMPONENT_TRANSFORMER_TYPES);
+        event.register(ComponentTransformers.COMPONENT_TRANSFORMER_REGISTRY);
     }
 }
