@@ -3,55 +3,48 @@ package com.nyan.everybagel.blocks.entities.actions;
 import com.nyan.everybagel.ModComponents;
 import com.nyan.everybagel.blocks.entities.MixingBowlBlockEntity;
 import com.nyan.everybagel.blocks.entities.shared.FluidContainerAction;
-import com.nyan.everybagel.gateau.GateauAssembler;
 import com.nyan.everybagel.gateau.GateauDefaults;
 import com.nyan.everybagel.gateau.GateauSet;
-import com.nyan.everybagel.gateau.mixes.GateauMixes;
 import com.nyan.everybagel.items.ModItems;
-import com.nyan.everybagel.recipes.MixingBowlRecipe;
 import com.nyan.everybagel.recipes.MixingBowlRecipeInput;
-import com.nyan.everybagel.recipes.ModRecipes;
+import com.nyan.everybagel.shared.utils.InventoryUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.neoforged.neoforge.fluids.FluidActionResult;
-import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
-
-import java.util.List;
-import java.util.function.Function;
 
 public class MixingBowlActions {
     // TODO: more descriptive return type
     public static void debug(MixingBowlBlockEntity be, Player player) {
-        player.displayClientMessage(Component.literal("DEBUG"), false);
         player.displayClientMessage(Component.literal(be.toString()), false);
         if (!player.getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
             var stack = player.getItemInHand(InteractionHand.OFF_HAND);
             player.displayClientMessage(Component.literal(stack.getComponents().toString()), false);
         }
         else if (player.getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
-            var stack = new ItemStack(ModItems.FLOUR.get());
+            var stack = new ItemStack(ModItems.DOUGH.get());
             stack.set(ModComponents.GATEAU, GateauSet.of(GateauDefaults.IRON, GateauDefaults.COPPER));
             player.setItemInHand(InteractionHand.OFF_HAND, stack);
         }
     }
 
     public static void mix(MixingBowlBlockEntity be, Player player) {
-        var finished = be.mix(MixingBowlBlockEntity.RECIPE_COMPLETE / 5);
-        if (finished) {
-            var result = new ItemStack(ModItems.DOUGH.get());
-            var inputGateaux = GateauAssembler.sumInputGateaux(be.getInventory());
-            var outputGateaux = GateauAssembler.computeOutput(inputGateaux, GateauMixes.MIXES.getMixes());
-            result.set(ModComponents.GATEAU, outputGateaux);
-            ItemHandlerHelper.giveItemToPlayer(player, result);
-        }
+        var input = new MixingBowlRecipeInput(InventoryUtils.inventoryToItemList(be.getInventory()), be.getFluidTank().getFluid());
+        var match = be.getCheck().getRecipeFor(input, be.getLevel());
+        match.ifPresent(holder -> {
+            var recipe = holder.value();
+            var finished = be.mix(MixingBowlBlockEntity.RECIPE_COMPLETE / 5);
+            if (finished) {
+                var output = recipe.assemble(input, be.getLevel().registryAccess());
+                ItemHandlerHelper.giveItemToPlayer(player, output);
+                be.resetProgress();
+                be.clearInventory();
+            }
+        });
     }
 
     public static void insert(MixingBowlBlockEntity be, ItemStack stack, Player player, InteractionHand hand) {

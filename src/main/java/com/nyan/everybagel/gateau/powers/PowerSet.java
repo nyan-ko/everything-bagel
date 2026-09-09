@@ -3,9 +3,7 @@ package com.nyan.everybagel.gateau.powers;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.nyan.everybagel.PairedListSet;
-import com.nyan.everybagel.gateau.Gateau;
-import com.nyan.everybagel.gateau.GateauSet;
+import com.nyan.everybagel.shared.structs.SortedPairMap;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +12,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 
-public class PowerSet extends PairedListSet<GateauPower.Resource, PowerSet.RankAmplifierPair> {
+public class PowerSet extends SortedPairMap<GateauPower.Resource, PowerSet.RankAmplifierPair> {
     public static final Codec<PowerSet> CODEC = Codec.pair(
             GateauPower.Resource.CODEC,
             RankAmplifierPair.CODEC

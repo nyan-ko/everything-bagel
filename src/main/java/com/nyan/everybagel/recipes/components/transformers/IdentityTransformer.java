@@ -13,9 +13,9 @@ public record IdentityTransformer() implements ComponentTransformer {
     public static final MapCodec<IdentityTransformer> CODEC = MapCodec.unit(IdentityTransformer::new);
 
     @Override
-    public void apply(DataComponentPatch.Builder patch, DataComponentMap components, ItemStack input) {
-        for (var component : components) {
-            patch.set((DataComponentType) component.type(), component.value());
+    public void apply(ItemStack result, ItemStack input) {
+        for (var component : input.getComponents()) {
+            result.set((DataComponentType) component.type(), component.value());
         }
     }
 

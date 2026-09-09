@@ -1,5 +1,6 @@
 package com.nyan.everybagel.recipes.components;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.world.item.ItemStack;
@@ -10,7 +11,7 @@ public abstract class ComponentRecipe<T extends ComponentRecipeInput> implements
     protected final ItemStack output;
 
     protected ComponentRecipe(ItemStack output) {
-        this.transformers = new ComponentTransformerList();
+        this.transformers = ComponentTransformerList.of();
         this.output = output;
     }
 
@@ -19,7 +20,26 @@ public abstract class ComponentRecipe<T extends ComponentRecipeInput> implements
         this.output = output;
     }
 
-    protected DataComponentPatch.Builder getPatchBuilder() {
-        return DataComponentPatch.builder();
+    @Override
+    public ItemStack assemble(T input, HolderLookup.Provider provider) {
+        var result = output.copy();
+
+        for (var pair : transformers) {
+            var transformer = pair.getKey();
+            var matcher = pair.getValue();
+
+            if (matcher.none()) {
+                transformer.apply(result, ItemStack.EMPTY);
+            }
+            else {
+                for (int i = 0; i < input.size(); i++) {
+                    var item = input.getItem(i);
+                    if (matcher.test(item)) {
+                        transformer.apply(result, item);
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

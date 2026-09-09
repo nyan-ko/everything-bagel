@@ -7,14 +7,17 @@ import net.minecraft.world.item.ItemStack;
 public record AugmentedSmeltingRecipeInput(ItemStack input) implements ComponentRecipeInput {
 
     @Override
-    public DataComponentMap getComponents() {
+    public DataComponentMap getComponents(int slot) {
+        if (slot >= 0 && slot < input.getCount()) {
+            throw new IllegalArgumentException("No item for slot " + slot);
+        }
         return input.getComponents();
     }
 
     @Override
-    public ItemStack getItem(int i) {
-        if (i >= 0 && i < this.input.getCount()) {
-            throw new IllegalArgumentException("No item for index " + i);
+    public ItemStack getItem(int slot) {
+        if (slot >= 0 && slot < this.input.getCount()) {
+            throw new IllegalArgumentException("No item for slot " + slot);
         }
         return this.input;
     }

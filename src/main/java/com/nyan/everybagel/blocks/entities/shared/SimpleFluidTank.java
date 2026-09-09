@@ -12,6 +12,10 @@ public class SimpleFluidTank extends FluidTank {
         this.be = holder;
     }
 
+    public void empty() {
+        drain(capacity, FluidAction.EXECUTE);
+    }
+
     @Override
     public boolean isFluidValid(FluidStack stack) {
         return true;

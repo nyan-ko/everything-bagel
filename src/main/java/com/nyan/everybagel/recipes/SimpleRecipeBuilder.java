@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,6 +35,11 @@ public abstract class SimpleRecipeBuilder<T extends Recipe<?>> implements Recipe
     @Override
     public Item getResult() {
         return itemOutput.getItem();
+    }
+
+    @Override
+    public RecipeBuilder group(@Nullable String s) {
+        return this;
     }
 
     @Override

@@ -3,12 +3,15 @@ package com.nyan.everybagel.blocks.entities;
 import com.nyan.everybagel.blocks.entities.shared.SimpleFluidTank;
 import com.nyan.everybagel.blocks.entities.shared.SimpleItemInventory;
 import com.nyan.everybagel.recipes.MixingBowlRecipe;
+import com.nyan.everybagel.recipes.MixingBowlRecipeInput;
+import com.nyan.everybagel.recipes.ModRecipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
@@ -20,15 +23,17 @@ public class MixingBowlBlockEntity extends BlockEntity {
     public static final int FLUID_CAPACITY = 4000;
     public static final int RECIPE_COMPLETE = 120;
 
-    private final ItemStackHandler inventory;
-    private final FluidTank fluidTank;
-    private MixingBowlRecipe currentRecipe;
+    private final SimpleItemInventory inventory;
+    private final SimpleFluidTank fluidTank;
+    private final RecipeManager.CachedCheck<MixingBowlRecipeInput, MixingBowlRecipe> check;
     private int recipeProgress = 0;
 
     public MixingBowlBlockEntity(BlockPos pos, BlockState blockState) {
         super(ModBlockEntities.MIXING_BOWL_BE.get(), pos, blockState);
+
         this.inventory = new SimpleItemInventory(this, ITEM_SLOTS);
         this.fluidTank = new SimpleFluidTank(this, FLUID_CAPACITY);
+        this.check = RecipeManager.createCheck(ModRecipes.MIXING_BOWL_TYPE.get());
     }
 
     public boolean mix(int increment) {
@@ -38,6 +43,11 @@ public class MixingBowlBlockEntity extends BlockEntity {
 
     public void resetProgress() {
         recipeProgress = 0;
+    }
+
+    public void clearInventory() {
+        inventory.empty();
+        fluidTank.empty();
     }
 
     @Override
@@ -69,13 +79,12 @@ public class MixingBowlBlockEntity extends BlockEntity {
         return "MixingBowlBlockEntity{" +
                 "inventory=" + inventory +
                 ", fluidTank=" + fluidTank +
-                ", currentRecipe=" + currentRecipe +
                 ", recipeProgress=" + recipeProgress +
                 '}';
     }
 
     public final ItemStackHandler getInventory() { return inventory; }
     public final FluidTank getFluidTank() { return fluidTank; }
-    public final MixingBowlRecipe getCurrentRecipe() { return currentRecipe; }
+    public final RecipeManager.CachedCheck<MixingBowlRecipeInput, MixingBowlRecipe> getCheck() {  return check; }
     public final int getRecipeProgress() { return recipeProgress; }
 }

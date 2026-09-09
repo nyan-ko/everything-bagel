@@ -13,9 +13,9 @@ public record ProjectionTransformer<T>(DataComponentType<T> query) implements Co
     public static final MapCodec<ProjectionTransformer<?>> CODEC = DataComponentType.CODEC.fieldOf("query").xmap(ProjectionTransformer::new, ProjectionTransformer::query);
 
     @Override
-    public void apply(DataComponentPatch.Builder patch, DataComponentMap components, ItemStack input) {
-        if (components.has(query)) {
-            patch.set(query, components.get(query));
+    public void apply(ItemStack result, ItemStack input) {
+        if (input.has(query)) {
+            result.set(query, input.get(query));
         }
     }
 

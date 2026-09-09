@@ -1,15 +1,13 @@
-package com.nyan.everybagel;
+package com.nyan.everybagel.shared.structs;
 
-import com.nyan.everybagel.gateau.Gateau;
-import com.nyan.everybagel.gateau.GateauSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PairedListSet<D1, D2> implements Collection<Map.Entry<D1, D2>> {
+public class SortedPairMap<D1 extends Comparable<D1>, D2> implements Collection<Map.Entry<D1, D2>> {
     private final TreeMap<D1, D2> backing;
 
-    protected PairedListSet(TreeMap<D1, D2> backing) {
+    protected SortedPairMap(TreeMap<D1, D2> backing) {
         this.backing = backing;
     }
 
@@ -45,7 +43,11 @@ public class PairedListSet<D1, D2> implements Collection<Map.Entry<D1, D2>> {
 
     @Override
     public boolean add(Map.Entry<D1, D2> d1D2Entry) {
-        backing.put(d1D2Entry.getKey(), d1D2Entry.getValue());
+        return add(d1D2Entry.getKey(), d1D2Entry.getValue());
+    }
+
+    public boolean add(D1 key, D2 value) {
+        backing.put(key, value);
         return true;
     }
 
@@ -66,7 +68,7 @@ public class PairedListSet<D1, D2> implements Collection<Map.Entry<D1, D2>> {
     @Override
     public boolean addAll(@NotNull Collection<? extends Map.Entry<D1, D2>> c) {
         for (var entry : c) {
-            backing.put(entry.getKey(), entry.getValue());
+            add(entry);
         }
         return true;
     }
@@ -84,6 +86,14 @@ public class PairedListSet<D1, D2> implements Collection<Map.Entry<D1, D2>> {
     @Override
     public void clear() {
         backing.clear();
+    }
+
+    public D2 get(D1 key) {
+        return backing.get(key);
+    }
+
+    public D2 getOrDefault(D1 key, D2 defaultValue) {
+        return backing.getOrDefault(key, defaultValue);
     }
 
     public Set<Map.Entry<D1, D2>> entrySet() {

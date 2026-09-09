@@ -3,15 +3,14 @@ package com.nyan.everybagel.gateau;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.nyan.everybagel.PairedListSet;
+import com.nyan.everybagel.shared.structs.SortedPairMap;
 import com.nyan.everybagel.SimpleRegistryResolver;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GateauSet extends PairedListSet<Gateau.Resource, GateauSet.QualityQuantityPair> {
+public class GateauSet extends SortedPairMap<Gateau.Resource, GateauSet.QualityQuantityPair> {
     private int xor;
     private String printName;
 
@@ -56,6 +55,19 @@ public class GateauSet extends PairedListSet<Gateau.Resource, GateauSet.QualityQ
             return this.keySet().equals(other.keySet());
         }
         return false;
+    }
+
+    public void multiplyQuantity(float scalar) {
+        for (Map.Entry<Gateau.Resource, QualityQuantityPair> entry : this.entrySet()) {
+            super.add(entry.getKey(), entry.getValue().scalarMultiply(scalar));
+        }
+    }
+
+    @Override
+    public boolean add(Gateau.Resource key, QualityQuantityPair value) {
+        var current = getOrDefault(key, QualityQuantityPair.ZERO);
+        super.add(key, current.add(value));
+        return true;
     }
 
     @Override
@@ -103,14 +115,28 @@ public class GateauSet extends PairedListSet<Gateau.Resource, GateauSet.QualityQ
                 '}';
     }
 
-    public record QualityQuantityPair(int quality, int quantity) {
+    public record QualityQuantityPair(float quantity, float effect) {
         public static final Codec<QualityQuantityPair> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.INT.optionalFieldOf("quality", 1).forGetter(QualityQuantityPair::quality),
-                Codec.INT.optionalFieldOf("quantity", 1).forGetter(QualityQuantityPair::quantity)
+                Codec.FLOAT.optionalFieldOf("quantity", 1f).forGetter(QualityQuantityPair::quantity),
+                Codec.FLOAT.optionalFieldOf("effect", 1f).forGetter(QualityQuantityPair::effect)
         ).apply(instance, QualityQuantityPair::new));
 
+        public static final QualityQuantityPair ZERO = new QualityQuantityPair(0.0f, 0.0f);
+
+        public float getQuantity() {
+            return quantity;
+        }
+
+        public float getQuality() {
+            return effect / quantity;
+        }
+
         public QualityQuantityPair add(QualityQuantityPair other) {
-            return new QualityQuantityPair(Math.max(quality, other.quality), quantity + other.quantity);
+            return new QualityQuantityPair(quantity + other.quantity, effect + other.effect);
+        }
+
+        public QualityQuantityPair scalarMultiply(float scalar) {
+            return new QualityQuantityPair(quantity * scalar, effect * scalar);
         }
     }
 }

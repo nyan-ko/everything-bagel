@@ -20,7 +20,7 @@ public abstract class ComponentCookingRecipeBuilder<T extends ComponentCookingRe
         super(output);
 
         this.result = output;
-        this.transformers = new ComponentTransformerList();
+        this.transformers = ComponentTransformerList.of();
     }
 
     public ComponentCookingRecipeBuilder<T> group(String group) {
@@ -29,7 +29,12 @@ public abstract class ComponentCookingRecipeBuilder<T extends ComponentCookingRe
     }
 
     public ComponentCookingRecipeBuilder<T> addTransformer(ComponentTransformer transformer) {
-        this.transformers.add(transformer);
+        this.transformers.add(transformer, Matcher.ALL);
+        return this;
+    }
+
+    public ComponentCookingRecipeBuilder<T> addTransformer(ComponentTransformer transformer, Matcher matcher) {
+        this.transformers.add(transformer, matcher);
         return this;
     }
 

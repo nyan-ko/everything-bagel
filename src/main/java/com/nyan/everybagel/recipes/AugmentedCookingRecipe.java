@@ -19,25 +19,6 @@ public class AugmentedCookingRecipe extends ComponentCookingRecipe<AugmentedSmel
     }
 
     @Override
-    public ItemStack assemble(SingleRecipeInput input, HolderLookup.Provider registries) {
-        var result = super.assemble(input, registries);
-        var builder = getPatchBuilder();
-        for (var transformer : transformers) {
-            transformer.apply(builder, input.item().getComponents(), input.item());
-        }
-        result.applyComponents(builder.build());
-        return result;
-    }
-
-
-    @Override
-    public boolean matches(SingleRecipeInput input, Level level) {
-        var result = super.matches(input, level);
-        LogUtils.getLogger().info("match attempt: " + input.item() + " result: " + result);
-        return result;
-    }
-
-    @Override
     public RecipeSerializer<?> getSerializer() {
         return ModRecipes.AUGMENTED_SMELTING_SERIALIZER.get();
     }
@@ -52,7 +33,7 @@ public class AugmentedCookingRecipe extends ComponentCookingRecipe<AugmentedSmel
     public static class Serializer implements RecipeSerializer<AugmentedCookingRecipe> {
         public static final MapCodec<AugmentedCookingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.STRING.optionalFieldOf("group", "").forGetter(AbstractCookingRecipe::getGroup),
-                CookingBookCategory.CODEC.fieldOf("category").orElse(CookingBookCategory.MISC).forGetter(AbstractCookingRecipe::category),
+                CookingBookCategory.CODEC.optionalFieldOf("category", CookingBookCategory.MISC).forGetter(AbstractCookingRecipe::category),
                 Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(r -> r.ingredient),
                 ItemStack.CODEC.fieldOf("result").forGetter(r -> r.result),
                 Codec.FLOAT.optionalFieldOf("experience",0.0f).forGetter(AbstractCookingRecipe::getExperience),

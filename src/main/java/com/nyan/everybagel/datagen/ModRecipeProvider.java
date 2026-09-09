@@ -6,12 +6,14 @@ import com.nyan.everybagel.items.ModItems;
 import com.nyan.everybagel.recipes.AugmentedSmeltingRecipeBuilder;
 import com.nyan.everybagel.recipes.MillstoneRecipeBuilder;
 import com.nyan.everybagel.recipes.MixingBowlRecipeBuilder;
+import com.nyan.everybagel.recipes.components.Matcher;
+import com.nyan.everybagel.recipes.components.transformers.GateauAggregationTransformer;
+import com.nyan.everybagel.recipes.components.transformers.GateauUpgradeTransformer;
 import com.nyan.everybagel.recipes.components.transformers.ProjectionTransformer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
@@ -26,9 +28,11 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
 
     @Override
     protected void buildRecipes(RecipeOutput recipeOutput) {
-        MixingBowlRecipeBuilder.of(new ItemStack(ModItems.DOUGH.get()))
+        MixingBowlRecipeBuilder.of(ModItems.DOUGH.toStack())
                 .requireItem(Ingredient.of(ModItems.FLOUR.get()))
                 .requireFluid(FluidIngredient.of(Fluids.WATER))
+                .addTransformer(new GateauAggregationTransformer(), Matcher.ALL)
+                .addTransformer(new GateauUpgradeTransformer(), Matcher.NONE)
                 .unlockedBy("has_flour", has(ModItems.FLOUR))
                 .save(recipeOutput);
         MillstoneRecipeBuilder.of(Ingredient.of(ModItemTags.MILLSTONE_INPUT), ModItems.FLOUR.toStack())

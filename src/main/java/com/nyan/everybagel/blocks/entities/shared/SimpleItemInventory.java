@@ -12,6 +12,12 @@ public class SimpleItemInventory extends ItemStackHandler {
         this.be = holder;
     }
 
+    public void empty() {
+        for (int i = 0; i < getSlots(); i++) {
+            setStackInSlot(i, ItemStack.EMPTY);
+        }
+    }
+
     @Override
     protected int getStackLimit(int slot, ItemStack stack) {
         return 64;
